@@ -1,7 +1,9 @@
 # 🌟Project Lucentia🌟
 
-Here are our Ideas:
--
+Pronounced `luˈt͡sɛnt͡sia`
+
+## Here are our Ideas:
+
 -
 -
 -
