@@ -1,1 +1,9 @@
-"# Project-Lucentia" 
+# 🌟Project Lucentia🌟
+
+Here are our Ideas:
+-
+-
+-
+-
+-
+-
