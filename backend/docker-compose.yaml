@@ -20,9 +20,13 @@ services:
       - "27017:27017"
     volumes:
       - ./init-mongodb.js:/docker-entrypoint-initdb.d/init-mongodb.js
+      - mongodb_data:/data/db   # Mount für den Datenpfad
     networks:
       - lucentia_network
 
 networks:
   lucentia_network:
     driver: bridge
+
+volumes:
+  mongodb_data:

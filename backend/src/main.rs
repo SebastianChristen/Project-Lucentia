@@ -1,12 +1,6 @@
 use actix_web::{get, App, HttpServer, Responder, HttpResponse};
-use mongodb::{Client, options::ClientOptions, bson::doc};
-use serde::{Serialize, Deserialize};
+use mongodb::{Client, options::ClientOptions, bson::{doc, Document}};
 use futures::stream::TryStreamExt;
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Message {
-    pub message: String,  // Change from 'messages' to 'message'
-}
 
 #[get("/messages")]
 async fn hello_world() -> impl Responder {
@@ -18,7 +12,7 @@ async fn hello_world() -> impl Responder {
             return HttpResponse::InternalServerError().body("Failed to connect to MongoDB");
         }
     };
-    
+
     let client = match Client::with_options(client_options) {
         Ok(client) => client,
         Err(err) => {
@@ -26,30 +20,21 @@ async fn hello_world() -> impl Responder {
             return HttpResponse::InternalServerError().body("Failed to create MongoDB client");
         }
     };
-    
-    let db = client.database("lucentia");
-    let collection = db.collection::<Message>("messages");
 
-    // Fetch messages from MongoDB with an empty filter
-    let messages = match collection.find(doc! {}).await {
-        Ok(cursor) => cursor,
+    // Fetch all databases
+    let databases = match client.list_databases().await {
+        Ok(db_list) => db_list,
         Err(err) => {
-            eprintln!("Error fetching messages from MongoDB: {:?}", err);
-            return HttpResponse::InternalServerError().body(format!("Failed to fetch messages: {:?}", err));
+            eprintln!("Error fetching databases from MongoDB: {:?}", err);
+            return HttpResponse::InternalServerError().body(format!("Failed to fetch databases: {:?}", err));
         }
     };
 
-    // Collect the messages
-    let collected: Vec<Message> = match messages.try_collect().await {
-        Ok(result) => result,
-        Err(err) => {
-            eprintln!("Error collecting messages: {:?}", err);
-            return HttpResponse::InternalServerError().body(format!("Failed to collect messages: {:?}", err));
-        }
-    };
+    // Log the list of databases for debugging
+    eprintln!("Fetched databases: {:?}", databases);
 
-    // Return the collected messages as a JSON response
-    HttpResponse::Ok().json(collected)
+    // Return the list of databases as a JSON response
+    HttpResponse::Ok().json(databases)
 }
 
 // Main method with Actix Web setup
