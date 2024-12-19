@@ -1,0 +1,6 @@
+services:
+  lucencia-backend:
+    build: .
+    command: cargo run
+    ports:
+      - "8080:8080"
