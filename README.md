@@ -1,11 +1,29 @@
 # 🌟Project Lucentia🌟
 
-Pronounced `luˈt͡sɛnt͡sia`
+Pronounced `luˈt͡sɛnt͡sia` (nah honestly, we dont care how you pronounce it, lol)
 
-## Here are our Ideas:
+## Frontend Documentation
 
--
--
--
--
--
+In our frontend, you can currently do the following:
+
+- see hello world in many languages
+
+plans for future:
+
+- make it look like discord
+
+## Backend Documentation
+
+### How to start backend
+
+1. go into the `backend` folder
+2. run `docker-compose up --build`
+3. finally, go to `http://localhost:8080`
+
+In our backend, you can currently do the following:
+
+- see hello world in many languages
+
+plans for future:
+
+- make it actually do something useful
