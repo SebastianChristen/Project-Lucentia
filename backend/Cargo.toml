@@ -5,3 +5,8 @@ edition = "2021"
 
 [dependencies]
 actix-web = "4.9.0"
+
+
+[[bin]]
+name = "lucencia-backend"
+path = "src/main.rs"
