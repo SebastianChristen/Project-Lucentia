@@ -1,3 +1,4 @@
+version: '3.7'
 services:
   lucencia-backend:
     build: .
@@ -7,3 +8,21 @@ services:
     volumes:
       - .:/app
       - /app/target
+    depends_on:
+      - mongodb
+    networks:
+      - lucentia_network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./init-mongodb.js:/docker-entrypoint-initdb.d/init-mongodb.js
+    networks:
+      - lucentia_network
+
+networks:
+  lucentia_network:
+    driver: bridge
