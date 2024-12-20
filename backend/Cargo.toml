@@ -5,3 +5,11 @@ edition = "2021"
 
 [dependencies]
 actix-web = "4.9.0"
+futures = "0.3.31"
+mongodb = "3.1.1"
+serde = "1.0.216"
+
+
+[[bin]]
+name = "lucencia-backend"
+path = "src/main.rs"
