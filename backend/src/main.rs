@@ -21,20 +21,32 @@ async fn hello_world() -> impl Responder {
         }
     };
 
-    // Fetch all databases
-    let databases = match client.list_databases().await {
-        Ok(db_list) => db_list,
+    let db = client.database("lucentia"); // Use the correct database name
+    let collection = db.collection::<Document>("messages"); // Use Document as the type for flexibility
+
+    // Fetch all documents from the MongoDB collection with an empty filter
+    let messages = match collection.find(doc! {}).await {
+        Ok(cursor) => cursor,
         Err(err) => {
-            eprintln!("Error fetching databases from MongoDB: {:?}", err);
-            return HttpResponse::InternalServerError().body(format!("Failed to fetch databases: {:?}", err));
+            eprintln!("Error fetching messages from MongoDB: {:?}", err);
+            return HttpResponse::InternalServerError().body(format!("Failed to fetch messages: {:?}", err));
         }
     };
 
-    // Log the list of databases for debugging
-    eprintln!("Fetched databases: {:?}", databases);
+    // Collect all documents as BSON Document
+    let collected: Vec<Document> = match messages.try_collect().await {
+        Ok(result) => result,
+        Err(err) => {
+            eprintln!("Error collecting messages: {:?}", err);
+            return HttpResponse::InternalServerError().body(format!("Failed to collect messages: {:?}", err));
+        }
+    };
 
-    // Return the list of databases as a JSON response
-    HttpResponse::Ok().json(databases)
+    // Log the collected documents for debugging
+    eprintln!("Fetched messages: {:?}", collected);
+
+    // Return the collected documents as a JSON response
+    HttpResponse::Ok().json(collected)
 }
 
 // Main method with Actix Web setup
