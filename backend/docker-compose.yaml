@@ -1,13 +1,12 @@
-version: '3.7'
+version: "3.7"
 services:
   lucencia-backend:
     build: .
-    command: cargo run
+    command: uvicorn main:app --host 0.0.0.0 --port 8000"
     ports:
-      - "8080:8080"
+      - "8000:8000"
     volumes:
       - .:/app
-      - /app/target
     depends_on:
       - mongodb
     networks:
@@ -20,7 +19,7 @@ services:
       - "27017:27017"
     volumes:
       - ./init-mongodb.js:/docker-entrypoint-initdb.d/init-mongodb.js
-      - mongodb_data:/data/db   # Mount für den Datenpfad
+      - mongodb_data:/data/db # Mount für den Datenpfad
     networks:
       - lucentia_network
 
