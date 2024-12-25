@@ -2,7 +2,7 @@ version: "3.7"
 services:
   lucencia-backend:
     build: .
-    command: uvicorn main:app --host 0.0.0.0 --port 8000"
+    command: "uvicorn main:app --host 0.0.0.0 --port 8000"
     ports:
       - "8000:8000"
     volumes:
@@ -19,7 +19,6 @@ services:
       - "27017:27017"
     volumes:
       - ./init-mongodb.js:/docker-entrypoint-initdb.d/init-mongodb.js
-      - mongodb_data:/data/db # Mount für den Datenpfad
     networks:
       - lucentia_network
 
