@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pymongo.database import Database
 from models import Message
 from typing import List
-from main import get_db
+from database import get_db
 
 router = APIRouter()
 
