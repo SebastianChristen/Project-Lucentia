@@ -18,7 +18,7 @@ plans for future:
 
 1. go into the `backend` folder: `cd backend`
 2. run `docker-compose up --build`
-3. finally, go to `http://localhost:8080/messages`
+3. finally, go to `http://localhost:8000/messages`
 
 In our backend, you can currently do the following:
 
