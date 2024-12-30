@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Lucentia</h1>
+
+    <hr />
+
+    <ul id="messages-list"></ul>
+
+    <script>
+      const backendUrl = "http://localhost:8000/messages/";
+
+      async function loadMessages() {
+        const response = await fetch(backendUrl);
+        const messages = await response.json();
+
+        const list = document.getElementById("messages-list");
+        list.innerHTML = "";
+
+        messages.forEach((message) => {
+          const listItem = document.createElement("p");
+          listItem.textContent = `${message.sender} : ${message.message}`;
+          list.appendChild(listItem);
+        });
+      }
+
+      window.onload = loadMessages;
+    </script>
+  </body>
+</html>

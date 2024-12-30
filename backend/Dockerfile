@@ -1,11 +1,9 @@
-FROM rust:latest
+FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY Cargo.toml Cargo.lock ./
+COPY . .
 
-RUN cargo fetch
+RUN pip install -r requirements.txt
 
-COPY ./src ./src
-
-EXPOSE 8080
+EXPOSE 8000

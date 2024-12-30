@@ -1,0 +1,37 @@
+version: "3.7"
+services:
+  lucencia-backend:
+    build:
+      context: ./backend
+    command: "uvicorn main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    networks:
+      - lucentia_network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./backend/init-mongodb.js:/docker-entrypoint-initdb.d/init-mongodb.js
+    networks:
+      - lucentia_network
+
+  lucencia-frontend:
+    image: nginx:latest
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    ports:
+      - "8080:80"
+    networks:
+      - lucentia_network
+
+networks:
+  lucentia_network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
