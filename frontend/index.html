@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 <html>
-  <body>
+  <body style="background-color: black; color: #696">
     <h1>Lucentia</h1>
 
-    <hr />
+    <hr style="color: #696" />
 
     <ul id="messages-list"></ul>
+
+    <form id="messageForm">
+      <input type="text" name="sender" placeholder="username" />
+      <input type="text" name="message" placeholder="message" />
+      <button type="submit">send</button>
+    </form>
 
     <script>
       const backendUrl = "http://localhost:8000/messages/";
 
+      // --- GET
       async function loadMessages() {
         const response = await fetch(backendUrl);
         const messages = await response.json();
@@ -23,6 +30,25 @@
           list.appendChild(listItem);
         });
       }
+
+      // --- POST
+      document.getElementById("messageForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const data = {
+          sender: formData.get("sender"),
+          message: formData.get("message"),
+        };
+
+        const response = await fetch(backendUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+      });
 
       window.onload = loadMessages;
     </script>
