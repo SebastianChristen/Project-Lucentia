@@ -16,9 +16,9 @@ plans for future:
 
 ### How to start backend
 
-1. go into the `backend` folder: `cd backend`
-2. run `docker-compose up --build`
-3. finally, go to `http://localhost:8000/messages`
+1. run `docker-compose up --build`
+2. go to `http://localhost:8000/messages` for backend
+3. go to `http://localhost:8080` for frontend
 
 In our backend, you can currently do the following:
 
