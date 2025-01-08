@@ -5,7 +5,7 @@ Pronounced `luˈt͡sɛnt͡sia` (nah honestly, we dont care how you pronounce it,
 ## Frontend Documentation
 
 1. go into the `frontend` folder: `cd frontend`
-2. install `npm init` `npm install electron --save-dev`
+2. install `npm install electron --save-dev`
 3. start `npm run start`
 
 In our frontend, you can currently do the following:
