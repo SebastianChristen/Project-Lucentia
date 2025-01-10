@@ -32,33 +32,38 @@
         });
       }
 
+      function scrollToBottom() {
+        const list = document.getElementById("messages-list");
+        list.scrollTop = list.scrollHeight;
+      }
+
       // --- POST
       document
         .getElementById("messageForm")
         .addEventListener("submit", async function (e) {
           e.preventDefault();
 
-        const formData = new FormData(e.target);
-        const data = {
-          sender: formData.get("sender"),
-          message: formData.get("message"),
-        };
+          const formData = new FormData(e.target);
+          const data = {
+            sender: formData.get("sender"),
+            message: formData.get("message"),
+          };
 
-        await fetch(backendUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
+          await fetch(backendUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+          e.target.reset();
+          await loadMessages();
+          scrollToBottom();
         });
-        e.target.reset();
-        loadMessages();
-      });
 
       setInterval(loadMessages, 5000); // Update messages every 5 seconds
 
       window.onload = loadMessages;
     </script>
   </body>
-  <script src="./renderer.js"></script>
 </html>
