@@ -26,7 +26,7 @@
 
         messages.forEach((message) => {
           const listItem = document.createElement("p");
-          listItem.textContent = `${message.sender} : ${message.message}`;
+          listItem.textContent = `${message.sender}: ${message.message}`;
           list.appendChild(listItem);
         });
       }
@@ -41,14 +41,18 @@
           message: formData.get("message"),
         };
 
-        const response = await fetch(backendUrl, {
+        await fetch(backendUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
         });
+        e.target.reset();
+        loadMessages();
       });
+
+      setInterval(loadMessages, 5000); // Update messages every 5 seconds
 
       window.onload = loadMessages;
     </script>
