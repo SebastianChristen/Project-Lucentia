@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
-  <body style="background-color: black; color: #696">
+  <head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
+  <body>
     <h1>Lucentia</h1>
 
-    <hr style="color: #696" />
-
-    <ul id="messages-list"></ul>
+    <div id="messages-list"></div>
 
     <form id="messageForm">
       <input type="text" name="sender" placeholder="username" />
@@ -32,8 +33,10 @@
       }
 
       // --- POST
-      document.getElementById("messageForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
+      document
+        .getElementById("messageForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
         const formData = new FormData(e.target);
         const data = {
