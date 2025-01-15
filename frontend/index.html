@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
-  <body style="background-color: black; color: #696">
+  <head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
+  <body>
     <h1>Lucentia</h1>
 
-    <hr style="color: #696" />
-
-    <ul id="messages-list"></ul>
+    <div id="messages-list"></div>
 
     <form id="messageForm">
       <input type="text" name="sender" placeholder="username" />
@@ -26,32 +27,43 @@
 
         messages.forEach((message) => {
           const listItem = document.createElement("p");
-          listItem.textContent = `${message.sender} : ${message.message}`;
+          listItem.textContent = `${message.sender}: ${message.message}`;
           list.appendChild(listItem);
         });
       }
 
+      function scrollToBottom() {
+        const list = document.getElementById("messages-list");
+        list.scrollTop = list.scrollHeight;
+      }
+
       // --- POST
-      document.getElementById("messageForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
+      document
+        .getElementById("messageForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-        const formData = new FormData(e.target);
-        const data = {
-          sender: formData.get("sender"),
-          message: formData.get("message"),
-        };
+          const formData = new FormData(e.target);
+          const data = {
+            sender: formData.get("sender"),
+            message: formData.get("message"),
+          };
 
-        const response = await fetch(backendUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
+          await fetch(backendUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+          e.target.reset();
+          await loadMessages();
+          scrollToBottom();
         });
-      });
+
+      setInterval(loadMessages, 5000); // Update messages every 5 seconds
 
       window.onload = loadMessages;
     </script>
   </body>
-  <script src="./renderer.js"></script>
 </html>
