@@ -17,6 +17,12 @@
     <script>
       const backendUrl = "http://localhost:8000/messages/";
 
+      const sessionUuid = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("session_uuid="))
+        ?.split("=")[1];
+      alert(`Your User ID is: ${sessionUuid || "not found"}`);
+
       // --- GET
       async function loadMessages() {
         const response = await fetch(backendUrl);

@@ -2,19 +2,19 @@
   <head>
     <link rel="stylesheet" type="text/css" href="styles.css" />
   </head>
-  <h1>Sign Up</h1>
   <body>
+    <h1>Sign Up</h1>
     <form id="usernameForm">
       <input type="text" name="username" placeholder="username" />
       <button type="submit">send</button>
     </form>
     <script>
       function goToIndex() {
-        // navigate to index.html
+        window.location.href = "index.html";
       }
 
-      function storeUuidInCookie() {
-        // put the returned uuid from the POST request in cookies or something similar, in order to create a session. before goin to the index page, where the user is then logged in.
+      function storeUuidInCookie(uuid) {
+        document.cookie = `session_uuid=${uuid};`;
       }
 
       const backendUrl = "http://localhost:8069/users/";
@@ -29,15 +29,22 @@
             username: formData.get("username"),
           };
 
-          await fetch(backendUrl, {
+          const response = await fetch(backendUrl, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
           });
-          storeUuidInCookie();
-          gotoindex();
+
+          if (!response.ok) {
+            throw new Error("Failed to sign up");
+          }
+
+          const responseData = await response.json();
+
+          storeUuidInCookie(responseData.id);
+          goToIndex();
         });
     </script>
   </body>
