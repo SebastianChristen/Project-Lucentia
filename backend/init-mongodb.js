@@ -65,3 +65,18 @@ db.messages.insertMany([
         sent_at: Date.now()
     }
 ]);
+
+
+
+db.users.insertMany([
+    {
+        id: "d9b2d63d-84b5-4c85-b4e5-e1e430d165f7",
+        username: "SebuPro #000",
+        status: "online",
+    },
+    {
+        id: "ad38137f-0e16-4e26-9a23-fd185dd2695b",
+        username: "Lorinator #007",
+        status: "offline",
+    }
+]);

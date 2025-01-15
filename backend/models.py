@@ -8,7 +8,7 @@ class Message(BaseModel):
     message: str
     sent_at: float = Field(default_factory=lambda: time.time())
 
-class Account(BaseModel):
+class User(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     username: str
     status: str
