@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
+  <h1>Sign Up</h1>
+  <body>
+    <form id="usernameForm">
+      <input type="text" name="username" placeholder="username" />
+      <button type="submit">send</button>
+    </form>
+    <script>
+      function goToIndex() {
+        // navigate to index.html
+      }
+
+      function storeUuidInCookie() {
+        // put the returned uuid from the POST request in cookies or something similar, in order to create a session. before goin to the index page, where the user is then logged in.
+      }
+
+      const backendUrl = "http://localhost:8069/users/";
+      // --- POST
+      document
+        .getElementById("usernameForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const formData = new FormData(e.target);
+          const data = {
+            username: formData.get("username"),
+          };
+
+          await fetch(backendUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+          storeUuidInCookie();
+          gotoindex();
+        });
+    </script>
+  </body>
+</html>

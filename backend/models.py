@@ -1,3 +1,4 @@
+from typing import Optional
 import uuid
 import time
 from pydantic import BaseModel, Field
@@ -9,6 +10,6 @@ class Message(BaseModel):
     sent_at: float = Field(default_factory=lambda: time.time())
 
 class User(BaseModel):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    id: uuid.UUID = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     username: str
-    status: str
+    status: Optional[str] = Field(default="offline")
