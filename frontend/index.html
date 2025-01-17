@@ -9,7 +9,6 @@
     <div id="messages-list"></div>
 
     <form id="messageForm">
-      <input type="text" name="sender" placeholder="username" />
       <input type="text" name="message" placeholder="message" />
       <button type="submit">send</button>
     </form>
@@ -29,8 +28,7 @@
       async function loadUsername() {
         const response = await fetch(backendUrlUser);
         const user = await response.json();
-        const usernamedisplay = document.getElementById("username-field");
-        usernamedisplay.innerHTML = "angemeldet als: " + user.username;
+        return user.username;
       }
 
       // --- GET MESSAGES
@@ -60,8 +58,9 @@
           e.preventDefault();
 
           const formData = new FormData(e.target);
+          const username = await loadUsername(); // Wait for username to be resolved
           const data = {
-            sender: formData.get("sender"),
+            sender: username, // username added before being sent here
             message: formData.get("message"),
           };
 
@@ -79,8 +78,9 @@
 
       setInterval(loadMessages, 5000); // Update messages every 5 seconds
 
-      window.onload = function () {
-        loadUsername();
+      window.onload = async function () {
+        const username = await loadUsername();
+        document.getElementById("username-field").textContent = "Angemeldet als: "+username;
         loadMessages();
       };
     </script>
