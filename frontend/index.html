@@ -5,7 +5,7 @@
   </head>
   <body>
     <h1>Lucentia</h1>
-
+    <div id="username-field"></div>
     <div id="messages-list"></div>
 
     <form id="messageForm">
@@ -15,15 +15,25 @@
     </form>
 
     <script>
-      const backendUrl = "http://localhost:8000/messages/";
-
+      // read user cookie (where the uuid is stored)
       const sessionUuid = document.cookie
         .split("; ")
         .find((row) => row.startsWith("session_uuid="))
         ?.split("=")[1];
       alert(`Your User ID is: ${sessionUuid || "not found"}`);
 
-      // --- GET
+      const backendUrl = "http://localhost:8069/messages/";
+      const backendUrlUser = `http://localhost:8069/users/${sessionUuid}`;
+
+      // --- GET USERNAME and display it
+      async function loadUsername() {
+        const response = await fetch(backendUrlUser);
+        const user = await response.json();
+        const usernamedisplay = document.getElementById("username-field");
+        usernamedisplay.innerHTML = "angemeldet als: " + user.username;
+      }
+
+      // --- GET MESSAGES
       async function loadMessages() {
         const response = await fetch(backendUrl);
         const messages = await response.json();
@@ -69,7 +79,10 @@
 
       setInterval(loadMessages, 5000); // Update messages every 5 seconds
 
-      window.onload = loadMessages;
+      window.onload = function () {
+        loadUsername();
+        loadMessages();
+      };
     </script>
   </body>
 </html>

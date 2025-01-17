@@ -14,6 +14,11 @@ async def get_users(db: Database = Depends(get_db)):
     users = list(db.users.find())
     return [User(**usr) for usr in users]
 
+# GET ONE BY UUID
+@router.get("/{uuid}", response_model=User)
+async def get_user(uuid: str, db: Database = Depends(get_db)):
+    user = db.users.find_one({"id": uuid})
+    return User(**user)
 
 # POST ONE
 @router.post("/", response_model=User)
