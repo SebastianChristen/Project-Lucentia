@@ -6,6 +6,9 @@
   <body>
     <h1>Lucentia</h1>
     <div id="username-field"></div>
+
+    <a href="login.html">Anmelden</a>
+    <a href="" onclick="logoff()">Abmelden</a>
     <div id="messages-list"></div>
 
     <form id="messageForm">
@@ -19,16 +22,20 @@
         .split("; ")
         .find((row) => row.startsWith("session_uuid="))
         ?.split("=")[1];
-      alert(`Your User ID is: ${sessionUuid || "not found"}`);
+      //alert(`Your User ID is: ${sessionUuid || "not found"}`); //nur zum developen
 
-      const backendUrl = "http://localhost:8069/messages/";
-      const backendUrlUser = `http://localhost:8069/users/${sessionUuid}`;
+      const backendUrl = "http://localhost:8000/messages/";
+      const backendUrlUser = `http://localhost:8000/users/${sessionUuid}`;
 
       // --- GET USERNAME and display it
       async function loadUsername() {
         const response = await fetch(backendUrlUser);
         const user = await response.json();
         return user.username;
+      }
+
+      function logoff(){
+        document.cookie = "session_uuid=;"; // uuid aus den cookies entfernen
       }
 
       // --- GET MESSAGES
