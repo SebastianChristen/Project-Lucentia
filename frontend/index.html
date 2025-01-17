@@ -5,19 +5,40 @@
   </head>
   <body>
     <h1>Lucentia</h1>
+    <div id="username-field"></div>
 
+    <a href="login.html">Anmelden</a>
+    <a href="" onclick="logoff()">Abmelden</a>
     <div id="messages-list"></div>
 
     <form id="messageForm">
-      <input type="text" name="sender" placeholder="username" />
       <input type="text" name="message" placeholder="message" />
       <button type="submit">send</button>
     </form>
 
     <script>
-      const backendUrl = "http://localhost:8000/messages/";
+      // read user cookie (where the uuid is stored)
+      const sessionUuid = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("session_uuid="))
+        ?.split("=")[1];
+      //alert(`Your User ID is: ${sessionUuid || "not found"}`); //nur zum developen
 
-      // --- GET
+      const backendUrl = "http://localhost:8000/messages/";
+      const backendUrlUser = `http://localhost:8000/users/${sessionUuid}`;
+
+      // --- GET USERNAME and display it
+      async function loadUsername() {
+        const response = await fetch(backendUrlUser);
+        const user = await response.json();
+        return user.username;
+      }
+
+      function logoff(){
+        document.cookie = "session_uuid=;"; // uuid aus den cookies entfernen
+      }
+
+      // --- GET MESSAGES
       async function loadMessages() {
         const response = await fetch(backendUrl);
         const messages = await response.json();
@@ -44,8 +65,9 @@
           e.preventDefault();
 
           const formData = new FormData(e.target);
+          const username = await loadUsername(); // Wait for username to be resolved
           const data = {
-            sender: formData.get("sender"),
+            sender: username, // username added before being sent here
             message: formData.get("message"),
           };
 
@@ -63,7 +85,11 @@
 
       setInterval(loadMessages, 5000); // Update messages every 5 seconds
 
-      window.onload = loadMessages;
+      window.onload = async function () {
+        const username = await loadUsername();
+        document.getElementById("username-field").textContent = "Angemeldet als: "+username;
+        loadMessages();
+      };
     </script>
   </body>
 </html>
