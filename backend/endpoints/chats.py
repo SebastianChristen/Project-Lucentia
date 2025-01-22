@@ -14,6 +14,11 @@ async def get_messages(db: Database = Depends(get_db)):
     messages = list(db.messages.find())
     return [Message(**msg) for msg in messages]
 
+# GET ALL
+@router.get("/", response_model=List[Message])
+async def get_messages(db: Database = Depends(get_db)):
+    messages = list(db.messages.find())
+    return [Message(**msg) for msg in messages]
 
 # POST ONE
 @router.post("/", response_model=Message)
