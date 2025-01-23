@@ -10,7 +10,7 @@ db.chats.insertMany([
       "f5e7928d-abfe-4e12-b9c5-f23a9c3ffca3",
       "a847858a-9bc4-49b0-bc93-9ef2cfc4d3d5",
     ],
-    message: [
+    messages: [
       {
         sender: "c56f2b88-9a12-41f4-a1e1-3bc7c9468b2c",
         message: "Did you check out the new framework?",
@@ -37,7 +37,7 @@ db.chats.insertMany([
       "c71d9918-dcfe-4f95-b5c4-f25a9c3ffd85",
       "d938758d-9bc4-41d0-cb93-9af3cfb4d3d7",
     ],
-    message: [
+    messages: [
       {
         sender: "b74d2b11-7c12-45f8-a2f1-4cc3c9479b3c",
         message: "Who watched the match last night?",
@@ -64,7 +64,7 @@ db.chats.insertMany([
       "e81f9913-abfd-4d32-b8c5-f26a9c3ffba7",
       "c847158a-1ac3-49d9-bc93-9ff4cfc4e3d9",
     ],
-    message: [
+    messages: [
       {
         sender: "d83e2b89-1a34-48d9-a2e3-4cb7d9469c3e",
         message: "What's everyone's favorite movie?",
