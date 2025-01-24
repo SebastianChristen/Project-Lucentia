@@ -2,117 +2,39 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script src="fetch-and-post.js"></script>
   </head>
   <body>
     <h1>Lucentia</h1>
-    <div id="username-field"></div>
+    <div id="account">
+      <div id="username-field"></div>
+      <a href="login.html">Anmelden</a>
+      <a href="" onclick="logoff()">Abmelden</a>
+    </div>
 
-    <a href="login.html">Anmelden</a>
-    <a href="" onclick="logoff()">Abmelden</a>
-    <div id="chats-list"></div>
-    <div id="messages-list"></div>
+    <main>
+      <div id="chats-list"></div>
 
-    <form id="messageForm">
-      <input type="text" name="message" placeholder="message" />
-      <button type="submit">send</button>
-    </form>
+      <div id="message-and-input-wrapper">
+        <div id="messages-list"></div>
+
+        <form id="messageForm">
+          <input type="text" name="message" placeholder="message" />
+          <button type="submit">send</button>
+        </form>
+      </div>
+    </main>
 
     <script>
-      // read user cookie (where the uuid is stored)
-      const sessionUuid = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("session_uuid="))
-        ?.split("=")[1];
-      //alert(`Your User ID is: ${sessionUuid || "not found"}`); //nur zum developen
-
-      // id aus url abrufen
-      const currentUrl = new URL(window.location.href);
-      const idFromUrl = currentUrl.searchParams.get("id");
-
-      const backendUrl = `http://localhost:8069/chats/${idFromUrl}`;
-      const backendUrlUser = `http://localhost:8069/users/${sessionUuid}`;
-
-      // --- GET alle verschiedenen chats anzeigen
-      async function getAllChats() {
-        const response = await fetch("http://localhost:8069/chats/");
-        const chats = await response.json();
-
-        const list2 = document.getElementById("chats-list");
-        list2.innerHTML = "hai :3";
-
-        chats.forEach((chat) => {
-          const listItem2 = document.createElement("a");
-          listItem2.href = `${"?id=" + chat.id}`;
-          listItem2.textContent = `${chat.name}`;
-          list2.appendChild(listItem2);
-        });
-      }
-
-      // --- GET USERNAME and display it
-      async function loadUsername() {
-        const response = await fetch(backendUrlUser);
-        const user = await response.json();
-        return user.username;
-      }
-
-      function logoff() {
-        document.cookie = "session_uuid=;"; // uuid aus den cookies entfernen
-      }
-
-      // --- GET MESSAGES
-      async function loadMessages() {
-        const response = await fetch(backendUrl);
-        const json = await response.json();
-        const messages = await json.messages;
-
-        const list = document.getElementById("messages-list");
-        list.innerHTML = "";
-
-        messages.forEach((message) => {
-          const listItem = document.createElement("p");
-          listItem.textContent = `${message.sender}: ${message.message}`;
-          list.appendChild(listItem);
-        });
-      }
-
-      function scrollToBottom() {
-        const list = document.getElementById("messages-list");
-        list.scrollTop = list.scrollHeight;
-      }
-
-      // --- POST
-      document
-        .getElementById("messageForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-
-          const formData = new FormData(e.target);
-          const username = await loadUsername(); // Wait for username to be resolved
-          const data = {
-            sender: username, // username added before being sent here
-            message: formData.get("message"),
-          };
-
-          await fetch(backendUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          });
-          e.target.reset();
-          await loadMessages();
-          scrollToBottom();
-        });
-
-      setInterval(loadMessages, 5000); // Update messages every 5 seconds
-
       window.onload = async function () {
         const username = await loadUsername();
-        document.getElementById("username-field").textContent = "Angemeldet als: " + username;
+        document.getElementById("username-field").textContent =
+          "Angemeldet als: " + username;
         loadMessages();
         getAllChats();
       };
+
+      setInterval(loadMessages, 5000); // Update messages every 5 seconds
     </script>
   </body>
 </html>
