@@ -11,7 +11,7 @@ router = APIRouter()
 # GET EVERYTHING
 @router.get("/", response_model=List[Chat])
 async def get_chats(db: Database = Depends(get_db)):
-    chats = list(db.chats.find())
+    chats = await db.chats.find().to_list(None)
     print(chats)
     return [Chat(**chat) for chat in chats]
 

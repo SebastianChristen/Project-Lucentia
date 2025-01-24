@@ -1,6 +1,6 @@
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 
-client = MongoClient("mongodb://mongodb:27017")
+client = AsyncIOMotorClient("mongodb://mongodb:27017")
 db = client.lucentia # Name vor Datebank lul
 
 def get_db():
