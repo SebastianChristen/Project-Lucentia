@@ -4,6 +4,7 @@ from pymongo.database import Database
 from models import Chat, Message
 from typing import List
 from database import get_db
+from .users import get_user
 
 router = APIRouter()
 
@@ -19,7 +20,13 @@ async def get_chats(db: Database = Depends(get_db)):
 # GET A SPECIFIED CHAT
 @router.get("/{id}", response_model=Chat)
 async def get_chats(id: str, db: Database = Depends(get_db)):
-    chat = db.chats.find_one({"id": id})
+    chat = await db.chats.find_one({"id": id})
+
+    # Translate goofy ahh UUIDs to usernames
+    for message in chat["messages"]:
+        user_data = await get_user(uuid=message["sender"], db=db)
+        message["sender"] = user_data.username
+
     return Chat(**chat)
 
 # POST ONE
