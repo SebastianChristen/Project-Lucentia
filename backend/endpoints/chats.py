@@ -16,11 +16,11 @@ async def get_chats(db: Database = Depends(get_db)):
     return [Chat(**chat) for chat in chats]
 
 
-# GET ALL MESSAGES OF A SPECIFIED CHAT
-@router.get("/{id}", response_model=List[Message])
+# GET A SPECIFIED CHAT
+@router.get("/{id}", response_model=Chat)
 async def get_chats(id: str, db: Database = Depends(get_db)):
-    chat = db.chats.find_one({"id": id}, {"messages": 1})
-    return [Message(**msg) for msg in chat.get("messages", [])]
+    chat = db.chats.find_one({"id": id})
+    return Chat(**chat)
 
 # POST ONE
 @router.post("/", response_model=Chat)
