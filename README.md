@@ -5,8 +5,18 @@ Pronounced `luˈt͡ʃɛnt͡sia`
 ## Frontend Documentation
 
 1. go into the `frontend` folder: `cd frontend`
-2. install `npm install electron --save-dev`
-3. start `npm run start`
+2. install `npm install --save-dev @babel/core @babel/preset-react babel-loader`
+3. start `npm start`
+
+Building distributables:
+```bash
+npm run make
+```
+
+Publishing your app:
+```bash
+npm run publish
+```
 
 ( or alternately, you can go to `http://localhost:8080` for frontend)
 

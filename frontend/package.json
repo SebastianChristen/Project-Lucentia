@@ -1,15 +1,44 @@
 {
   "name": "frontend",
+  "productName": "frontend",
   "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
+  "description": "My Electron application description",
+  "main": ".webpack/main",
   "scripts": {
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
   },
-  "author": "SebastianChristen, dalehm",
-  "license": "GPL-3.0-only",
   "devDependencies": {
-    "electron": "^33.2.1"
+    "@babel/core": "^7.26.7",
+    "@babel/preset-react": "^7.26.3",
+    "@electron-forge/cli": "^7.6.1",
+    "@electron-forge/maker-deb": "^7.6.1",
+    "@electron-forge/maker-rpm": "^7.6.1",
+    "@electron-forge/maker-squirrel": "^7.6.1",
+    "@electron-forge/maker-zip": "^7.6.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.6.1",
+    "@electron-forge/plugin-fuses": "^7.6.1",
+    "@electron-forge/plugin-webpack": "^7.6.1",
+    "@electron/fuses": "^1.8.0",
+    "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^6.11.0",
+    "electron": "34.0.1",
+    "node-loader": "^2.1.0",
+    "style-loader": "^3.3.4"
+  },
+  "keywords": [],
+  "author": {
+    "name": "dalehm",
+    "email": "david.lehmann@3612.ch"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }
