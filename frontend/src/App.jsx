@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
-import Home from './components/Home.jsx'
+import Login from "./pages/Login.jsx";
 
 const root = createRoot(document.body);
-root.render(<Home />);
+root.render(<Login />);

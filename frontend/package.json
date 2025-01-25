@@ -2,7 +2,7 @@
   "name": "frontend",
   "productName": "frontend",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Frontend for chat application",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -32,10 +32,9 @@
   },
   "keywords": [],
   "author": {
-    "name": "dalehm",
-    "email": "david.lehmann@3612.ch"
+    "name": "SebastianChristen, dalehm"
   },
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
     "react": "^19.0.0",
