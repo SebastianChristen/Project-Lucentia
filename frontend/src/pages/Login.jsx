@@ -1,34 +1,20 @@
 import React, { useState } from "react";
 import "../styles/styles.css";
+import { createUser } from "../services/api.js";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
 
-  const backendUrl = "http://localhost:8000/users/";
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = { username };
-
     try {
-      const response = await fetch(backendUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const responseData = await createUser(username);
 
-      if (!response.ok) {
-        throw new Error("Failed to sign up");
-      }
-
-      const responseData = await response.json();
-      document.cookie = `session_uuid=${responseData.id};`;
-      window.location.href = "index.html";
+      console.log("User signed up successfully:", responseData);
     } catch (error) {
-      console.error(error.message);
+    
+      alert("Error during sign up. Please try again.");
     }
   };
 
@@ -39,7 +25,7 @@ const Signup = () => {
         <input
           type="text"
           name="username"
-          placeholder="username"
+          placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
