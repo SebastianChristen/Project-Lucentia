@@ -30,8 +30,13 @@ async def get_chats(id: str, db: Database = Depends(get_db)):
     return Chat(**chat)
 
 # POST ONE
-@router.post("/", response_model=Chat)
-async def create_chat(chat: Chat, db: Database = Depends(get_db)):
-    db.chats.insert_one(chat.dict())
-    return chat
+@router.post("/{id}", response_model=Chat)
+async def create_chat(message: Message, db: Database = Depends(get_db)):
+    message_dict = message.dict()
+    await db.chats.update_one(
+        {"id": id},
+        {"$push": {"messages": message_dict}}
+    )
+    updated_chat = await db.chats.find_one({"id": id})
+    return updated_chat
 
