@@ -9,12 +9,12 @@ const sessionUuid = document.cookie
 const currentUrl = new URL(window.location.href);
 const idFromUrl = currentUrl.searchParams.get("id");
 
-const backendUrl = `http://localhost:8069/chats/${idFromUrl}`;
-const backendUrlUser = `http://localhost:8069/users/${sessionUuid}`;
+const backendUrl = `http://localhost:8000/chats/${idFromUrl}`;
+const backendUrlUser = `http://localhost:8000/users/${sessionUuid}`;
 
 // --- GET alle verschiedenen chats anzeigen
 async function getAllChats() {
-  const response = await fetch("http://localhost:8069/chats/");
+  const response = await fetch("http://localhost:8000/chats/");
   const chats = await response.json();
 
   const list2 = document.getElementById("chats-list");
@@ -62,28 +62,3 @@ function scrollToBottom() {
   const list = document.getElementById("messages-list");
   list.scrollTop = list.scrollHeight;
 }
-
-// --- POST eine message
-document
-  .getElementById("messageForm")
-  .addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-    const username = await loadUsername(); // Wait for username to be resolved
-    const data = {
-      sender: username, // username added before being sent here
-      message: formData.get("message"),
-    };
-
-    await fetch(backendUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    e.target.reset();
-    await loadMessages();
-    scrollToBottom();
-  });
