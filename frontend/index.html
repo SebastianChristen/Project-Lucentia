@@ -48,10 +48,12 @@
           message: formData.get("message"),
         };
 
+        const API_KEY = "your-secret-key"; // API-Key wird hier hinzugefügt 
         await fetch(backendUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "X-API-KEY": API_KEY, // API-Key wird hier hinzugefügt
           },
           body: JSON.stringify(data),
         });

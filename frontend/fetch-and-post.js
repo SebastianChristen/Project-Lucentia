@@ -11,10 +11,17 @@ const idFromUrl = currentUrl.searchParams.get("id");
 
 const backendUrl = `http://localhost:8000/chats/${idFromUrl}`;
 const backendUrlUser = `http://localhost:8000/users/${sessionUuid}`;
+const API_KEY = "your-secret-key";
 
 // --- GET alle verschiedenen chats anzeigen
 async function getAllChats() {
-  const response = await fetch("http://localhost:8000/chats/");
+  const response = await fetch("http://localhost:8000/chats/", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": API_KEY, // API-Key wird hier hinzugefügt
+    },
+  });
   const chats = await response.json();
 
   const list2 = document.getElementById("chats-list");
@@ -31,7 +38,13 @@ async function getAllChats() {
 
 // --- GET USERNAME and display it
 async function loadUsername() {
-  const response = await fetch(backendUrlUser);
+  const response = await fetch(backendUrlUser, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": API_KEY, // API-Key wird hier hinzugefügt
+    },
+  });
   const user = await response.json();
   return user.username;
 }
@@ -43,7 +56,14 @@ function logoff() {
 
 // --- GET MESSAGES
 async function loadMessages() {
-  const response = await fetch(backendUrl);
+  const response = await fetch(backendUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": API_KEY, // API-Key wird hier hinzugefügt
+    },
+  });
+
   const json = await response.json();
   const messages = await json.messages;
 
