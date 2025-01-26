@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:8000/';
+const API_URL = 'http://localhost:8000';
 
 async function fetchData(url, options = {}) {
     try {
@@ -23,7 +23,7 @@ async function fetchData(url, options = {}) {
 }
 
 export const getAllUserData = async () => {
-    return await fetchData(`/users/`);
+    return await fetchData(`users/`);
 };
 
 
