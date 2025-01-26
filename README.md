@@ -5,8 +5,11 @@ Pronounced `luˈt͡ʃɛnt͡sia`
 ## Frontend Documentation
 
 1. go into the `frontend` folder: `cd frontend`
-2. install `npm install --save-dev @babel/core @babel/preset-react babel-loader`
+2. install
+`npm install --save react react-dom`
+`npm install --save-dev @types/react @types/react-dom`
 3. start `npm start`
+
 
 Building distributables:
 ```bash
