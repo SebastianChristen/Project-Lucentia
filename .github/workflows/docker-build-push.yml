@@ -29,4 +29,5 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ghcr.io/${{ github.repository | toLowerCase }}/backend:latest
+          tags: ghcr.io/sebastianchristen/project-lucentia/backend:latest
+
