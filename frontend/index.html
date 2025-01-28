@@ -35,6 +35,32 @@
       };
 
       setInterval(loadMessages, 5000); // Update messages every 5 seconds
+
+      // --- POST eine message (lol somehow doesnt work fetch-and-post.js lmao)
+
+      document.getElementById("messageForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const username = await loadUsername(); // Wait for username to be resolved
+        const data = {
+          sender: sessionUuid, // username added before being sent here
+          message: formData.get("message"),
+        };
+
+        const API_KEY = "your-secret-key"; // API-Key wird hier hinzugefügt 
+        await fetch(backendUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY": API_KEY, // API-Key wird hier hinzugefügt
+          },
+          body: JSON.stringify(data),
+        });
+        e.target.reset();
+        await loadMessages();
+        scrollToBottom();
+      });
     </script>
   </body>
 </html>
