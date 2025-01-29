@@ -25,7 +25,7 @@ npm run publish
 
 In our frontend, you can currently do the following:
 
-- see hello world in many languages
+- 
 
 plans for future:
 
