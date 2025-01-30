@@ -1,3 +1,4 @@
 fastapi
 motor
 uvicorn
+python-jose
