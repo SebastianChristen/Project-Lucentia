@@ -1,13 +1,13 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt
+from jose import jwt,  JWTError
 from datetime import datetime, timedelta
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-# --- token ---
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -20,20 +20,15 @@ def verify_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
-    except jwt.PyJWTError:
+    except JWTError:
         return None
-    
-
-# --- user ---
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="lucen-token")
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
     payload = verify_token(token)
-    if payload is None:
+    if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            detail="Invalid or expired token",
             headers={"WWW-Authenticate": "Bearer"},
         )
     return payload
