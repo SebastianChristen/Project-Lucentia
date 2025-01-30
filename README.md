@@ -25,9 +25,9 @@ plans for future:
 1. run `docker-compose up --build`
 2. go to `http://localhost:8000/messages` for backend
 
-In our backend, you can currently do the following:
+### Endpoints
 
-- see hello world in many languages
+All infos to endpoints can be found here: http://localhost:8000/docs
 
 plans for future:
 
