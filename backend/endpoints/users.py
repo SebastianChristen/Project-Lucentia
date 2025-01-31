@@ -12,7 +12,7 @@ router = APIRouter()
 # GET ALL
 @router.get("/", response_model=List[User])
 async def get_users(db: Database = Depends(get_db)):
-    users = db.users.find().to_list(None)
+    users = await db.users.find().to_list(None)
     return [User(**usr) for usr in users]
 
 # GET ONE BY UUID

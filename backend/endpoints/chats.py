@@ -34,7 +34,7 @@ async def get_chats(id: str, db: Database = Depends(get_db)):
 @router.post("/{chat_id}", response_model=Chat)
 async def create_chat(chat_id: str, message: Message, db: Database = Depends(get_db), user=Depends(get_current_user)):
     message_dict = message.dict()
-    message_dict["sender"] = user.id # TODO: Userlogik einbauen 
+    message_dict["sender"] = user["sub"]
     await db.chats.update_one(
         {"id": chat_id},
         {"$push": {"messages": message_dict}}

@@ -17,7 +17,7 @@ class Chat(BaseModel):
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     username: str
-    password: str
+    password: Optional[str] = Field(default="")
     status: Optional[str] = Field(default="offline")
 
 # Login Request Model

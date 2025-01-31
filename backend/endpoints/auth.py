@@ -30,7 +30,7 @@ async def create_user(
     return {"access_token": token, "token_type": "bearer"}
 
 # LOGIN
-@router.post("/login")
+@router.post("/login", response_model=TokenResponse)
 async def login(
     username: str = Form(...),   # Form statt Pydantic-Modell!
     password: str = Form(...),   # Form statt Pydantic-Modell!
