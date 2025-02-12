@@ -17,7 +17,7 @@ def api_key_auth(request: Request): # TODO: auskommentiert cuz lol
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # Nur Anfragen von localhost:8080 erlauben
+    allow_origins=["http://localhost:8081"],  # Nur Anfragen von localhost:8080 erlauben
     allow_methods=["*"],
     allow_headers=["*"]
 )
