@@ -7,6 +7,7 @@ const App = () => {
   const [messages, setMessages] = useState([]);
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
+  const [selectedChatId, setSelectedChatId] = useState(null); // New state for selected chat ID
 
   // Replace with your backend URL and API Key
   const API_KEY = "your-secret-key";
@@ -17,17 +18,20 @@ const App = () => {
     async function loadData() {
       // const username = await loadUsername();
       // setUsername(username);
-      loadMessages();
+      loadMessages(selectedChatId);
       getAllChats();
     }
 
     loadData();
-    const interval = setInterval(loadMessages, 5000); // Update messages every 5 seconds
+    const interval = setInterval(() => {
+      if (selectedChatId) {
+        loadMessages(selectedChatId); // Update messages every 5 seconds for the selected chat
+      }
+    }, 5000); // Update messages every 5 seconds
     return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
+  }, [selectedChatId]); // Only re-run the effect if selectedChatId changes
 
   const loadUsername = async () => {
-    const sessionUuid = document.cookie.split("; ").find(row => row.startsWith("session_uuid="))?.split("=")[1];
     const response = await fetch(backendUrlUser, {
       method: "GET",
       headers: { "Content-Type": "application/json", "X-API-KEY": API_KEY },
@@ -36,22 +40,21 @@ const App = () => {
     return user.username;
   };
 
-  const loadMessages = async () => {
+  const loadMessages = async (chatId) => {
+    if (!chatId) return;
     try {
-      const response = await fetch(backendUrl, {
+      const response = await fetch(`${backendUrl}${chatId}`, {  // Use the selected chatId
         method: "GET",
         headers: { "Content-Type": "application/json", "X-API-KEY": API_KEY },
       });
   
       const json = await response.json();
-      // Sicherstellen, dass json.messages ein Array ist
       setMessages(Array.isArray(json.messages) ? json.messages : []);
     } catch (error) {
       console.error("Error loading messages:", error);
       setMessages([]); // Fallback, falls ein Fehler auftritt
     }
   };
-  
 
   const getAllChats = async () => {
     const response = await fetch("http://localhost:8000/chats/", {
@@ -69,7 +72,7 @@ const App = () => {
       message: message,
     };
 
-    await fetch(backendUrl, {
+    await fetch(`${backendUrl}${selectedChatId}`, {  // Send the message to the selected chatId
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -79,7 +82,7 @@ const App = () => {
     });
 
     setMessage(""); // Reset input field
-    loadMessages(); // Reload messages
+    loadMessages(selectedChatId); // Reload messages for the selected chat
   };
 
   const logoff = () => {
@@ -101,8 +104,8 @@ const App = () => {
 
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.chatsList}>
-          {chats.map((chat, index) => (
-            <TouchableOpacity key={index}>
+          {chats.map((chat) => (
+            <TouchableOpacity key={chat.id} onPress={() => { setSelectedChatId(chat.id); loadMessages(chat.id); }}>
               <Text style={styles.chat}>{chat.name}</Text>
             </TouchableOpacity>
           ))}
@@ -112,7 +115,9 @@ const App = () => {
       <View style={styles.messageWrapper}>
         <ScrollView style={styles.messagesList}>
           {messages.map((message, index) => (
-            <Text key={index} style={{ color: '#696' }}>{message.sender}: {message.message}</Text>
+            <Text key={index} style={{ color: '#696' }}>
+              {message.sender}: {message.message}
+            </Text>
           ))}
         </ScrollView>
 
