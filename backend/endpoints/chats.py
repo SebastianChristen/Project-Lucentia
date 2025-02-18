@@ -1,5 +1,5 @@
 # endpoints/chats.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from pymongo.database import Database
 from .users import get_user
 from models import Chat, Message
@@ -32,12 +32,11 @@ async def get_chats(id: str, db: Database = Depends(get_db)):
 
 # POST ONE
 @router.post("/{chat_id}", response_model=Chat)
-async def create_chat(chat_id: str, message: Message, db: Database = Depends(get_db), user=Depends(get_current_user)):
-    message_dict = message.dict()
-    message_dict["sender"] = user["sub"]
+async def create_chat(chat_id: str,  message: dict = Body(...), db: Database = Depends(get_db), user=Depends(get_current_user)):
+    message["sender"] = user["sub"]
     await db.chats.update_one(
         {"id": chat_id},
-        {"$push": {"messages": message_dict}}
+        {"$push": {"messages": message}}
     )
     updated_chat = await db.chats.find_one({"id": chat_id})
     return updated_chat
