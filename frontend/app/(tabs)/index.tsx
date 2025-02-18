@@ -51,7 +51,10 @@ const App = () => {
   const loadUsername = async () => {
     const response = await fetch(backendUrlUser, {
       method: "GET",
-      headers: { "Content-Type": "application/json", "X-API-KEY": API_KEY },
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": API_KEY,
+        "Authorization": `Bearer ${token}`}
     });
     const user = await response.json();
     setUsername(user.username);
@@ -94,6 +97,7 @@ const App = () => {
       headers: {
         "Content-Type": "application/json",
         "X-API-KEY": API_KEY,
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(data),
     });

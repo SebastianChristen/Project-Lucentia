@@ -26,7 +26,8 @@ async def create_user(
     new_user = User(username=username, password=hashed_password)
     await db.users.insert_one(new_user.dict())
 
-    token = create_access_token(data={"sub": username})
+    token = create_access_token(data={"sub": str(new_user.id)})  # Convert ObjectId to string
+
     return {"access_token": token, "token_type": "bearer"}
 
 # LOGIN
@@ -44,9 +45,13 @@ async def login(
     if not pwd_context.verify(password, stored_user["password"]):
         raise HTTPException(status_code=400, detail="Incorrect password")
 
-    token = create_access_token(data={"sub": username})
+    token = create_access_token(data={"sub": str(stored_user["id"])})
     return {"access_token": token, "token_type": "bearer"}
 
 @router.get("/me")
-async def read_users_me(user: dict = Depends(get_current_user)):
-    return {"username": user["sub"]}
+async def read_users_me(user: dict = Depends(get_current_user), db: Database = Depends(get_db)):
+    stored_user = await db.users.find_one({"id": user["sub"]})
+    if not stored_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"username": stored_user["username"], "id": str(stored_user["id"])}
