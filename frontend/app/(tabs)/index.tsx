@@ -16,7 +16,7 @@ const App = () => {
   // Replace with your backend URL and API Key
   const API_KEY = "your-secret-key";
   const backendUrl = `http://localhost:8000/chats/`;
-  const backendUrlUser = `http://localhost:8000/users/`;
+  const backendUrlUser = `http://localhost:8000/auth/me`;
 
   const [token, setToken] = useState(null);
     
@@ -36,6 +36,7 @@ const App = () => {
       // setUsername(username);
       loadMessages(selectedChatId);
       getAllChats();
+      loadUsername();
     }
 
     loadData();
@@ -53,7 +54,7 @@ const App = () => {
       headers: { "Content-Type": "application/json", "X-API-KEY": API_KEY },
     });
     const user = await response.json();
-    return user.username;
+    setUsername(user.username);
   };
 
   const loadMessages = async (chatId) => {
