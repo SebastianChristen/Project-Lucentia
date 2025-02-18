@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import styles from './styles'; // Import styles
+import { useNavigation } from '@react-navigation/native'
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -8,11 +11,24 @@ const App = () => {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
   const [selectedChatId, setSelectedChatId] = useState(null); // New state for selected chat ID
+  const navigation = useNavigation();
 
   // Replace with your backend URL and API Key
   const API_KEY = "your-secret-key";
   const backendUrl = `http://localhost:8000/chats/`;
   const backendUrlUser = `http://localhost:8000/users/`;
+
+  const [token, setToken] = useState(null);
+    
+  useEffect(() => {
+      const checkToken = async () => {
+          const storedToken = await AsyncStorage.getItem("token");
+          if (storedToken) {
+              setToken(storedToken);
+          }
+      };
+      checkToken();
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -94,8 +110,8 @@ const App = () => {
       <Text style={styles.header}>Lucentia</Text>
       <View style={styles.account}>
         <Text>Angemeldet als: {username}</Text>
-        <TouchableOpacity onPress={() => {}}>
-          <Text style={styles.link}>Anmelden</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('explore')}>
+            <Text style={styles.link}>Anmelden</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={logoff}>
           <Text style={styles.link}>Abmelden</Text>
