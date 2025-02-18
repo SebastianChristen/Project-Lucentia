@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "@react-native-async-storage/async-storage": "^2.1.1",
-    "async-storage": "^0.1.0",
-    "axios": "^1.7.9",
-    "expo": "^52.0.35",
-    "react-native-async-storage": "^0.0.1"
-  }
-}
