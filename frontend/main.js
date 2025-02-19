@@ -1,3 +1,5 @@
+/*TODO This file is not used*/
+
 const { app, BrowserWindow } = require('electron/main')
 
 const createWindow = () => {
