@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import styles from './styles'; // Import styles
+import styles from '../../styles'; // Import styles
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -21,19 +21,33 @@ const App = () => {
   const [token, setToken] = useState(null);
     
   useEffect(() => {
-      const checkToken = async () => {
-          const storedToken = await AsyncStorage.getItem("token");
-          if (storedToken) {
-              setToken(storedToken);
-          }
-      };
-      checkToken();
-  }, []);
+    const checkToken = async () => {
+        const storedToken = await AsyncStorage.getItem("token");
+        if (storedToken !== token) {
+            setToken(storedToken);
+        }
+    };
+
+    // Run initially
+    checkToken();
+
+    // Listen for changes in AsyncStorage
+    const interval = setInterval(checkToken, 3000); // Polling every 3s
+
+    return () => clearInterval(interval); // Cleanup on unmount
+}, [token]);
+
+  useEffect(() => {
+      if (token) {
+          loadUsername();
+          getAllChats();
+      }
+  }, [token]); // Runs when token updates
+
+
 
   useEffect(() => {
     async function loadData() {
-      // const username = await loadUsername();
-      // setUsername(username);
       loadMessages(selectedChatId);
       getAllChats();
       loadUsername();
@@ -115,12 +129,6 @@ const App = () => {
       <Text style={styles.header}>Lucentia</Text>
       <View style={styles.account}>
         <Text>Angemeldet als: {username}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('explore')}>
-            <Text style={styles.link}>Anmelden</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={logoff}>
-          <Text style={styles.link}>Abmelden</Text>
-        </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.scrollContainer}>
@@ -148,6 +156,9 @@ const App = () => {
             placeholder="Message"
             value={message}
             onChangeText={setMessage}
+            onSubmitEditing={handleSubmit} // Send message when Enter is pressed
+            blurOnSubmit={false} // Keep focus on input after sending
+            returnKeyType="send" // Changes keyboard "Enter" key to "Send"
           />
           <Button title="Send" onPress={handleSubmit} style={styles.sendButton} />
         </View>
