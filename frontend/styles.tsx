@@ -20,9 +20,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   chat: {
-    fontSize: 18,
+    fontSize: 20,
     marginBottom: 10,
     color: "#007BFF",
+  },
+  twowrapper:{
+    display: "flex",
+    flexDirection: "row"
   },
   messageWrapper: {
     flex: 1,
