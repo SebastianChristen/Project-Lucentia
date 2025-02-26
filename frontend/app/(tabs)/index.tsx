@@ -107,8 +107,8 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>🍳 CookChat</Text>
-      <Text style={styles.username}>Logged in as: {username}</Text>
+      <Text style={styles.header}>👽 AlienChat</Text>
+      <Text style={styles.username}>Connected as: {username}</Text>
 
       <View style={styles.chatWrapper}>
         <ScrollView style={styles.chatList}>
@@ -122,7 +122,9 @@ const App = () => {
         <ScrollView style={styles.messagesList}>
           {messages.map((msg, index) => (
             <View key={index} style={styles.messageBubble}>
-              <Text style={styles.messageSender}>{msg.sender}</Text>
+              <Text style={styles.messageSender}>
+            {msg.sender} - {new Date(Number(msg.sent_at)).toLocaleString()}
+          </Text>
               <Text style={styles.messageText}>{msg.message}</Text>
             </View>
           ))}
@@ -132,32 +134,32 @@ const App = () => {
       <View style={styles.messageForm}>
         <TextInput
           style={styles.messageInput}
-          placeholder="Type a message..."
+          placeholder="Send a signal..."
           value={message}
           onChangeText={setMessage}
-          onSubmitEditing={handleSubmit} // Send message when Enter is pressed
-          blurOnSubmit={false} // Keep focus on input after sending
-          returnKeyType="send" // Changes keyboard "Enter" key to "Send"
+          onSubmitEditing={handleSubmit}
+          blurOnSubmit={false}
+          returnKeyType="send"
         />
-        <Button title="Send" onPress={handleSubmit} />
+        <Button title="Transmit" onPress={handleSubmit} color="#39FF14" />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#F8F1E7" },
-  header: { fontSize: 28, fontWeight: "bold", textAlign: "center", color: "#D35400" },
-  username: { textAlign: "center", marginBottom: 10 },
+  container: { flex: 1, padding: 20, backgroundColor: "#0A0A23" },
+  header: { fontSize: 28, fontWeight: "bold", textAlign: "center", color: "#39FF14" },
+  username: { textAlign: "center", marginBottom: 10, color: "#A6FFFD" },
   chatWrapper: { flexDirection: "row", flex: 1 },
-  chatList: { maxWidth: 120, backgroundColor: "#FDEDEC", padding: 10, borderRadius: 10 },
-  chat: { fontSize: 16, marginBottom: 8, color: "#E67E22" },
+  chatList: { maxWidth: 120, backgroundColor: "#112233", padding: 10, borderRadius: 10 },
+  chat: { fontSize: 16, marginBottom: 8, color: "#39FF14" },
   messagesList: { flex: 1, padding: 10 },
-  messageBubble: { marginBottom: 10, padding: 10, backgroundColor: "#FAE5D3", borderRadius: 8 },
-  messageSender: { fontWeight: "bold", color: "#D35400" },
-  messageText: { color: "#6C3483" },
+  messageBubble: { marginBottom: 10, padding: 10, backgroundColor: "#222244", borderRadius: 8 },
+  messageSender: { fontWeight: "bold", color: "#39FF14" },
+  messageText: { color: "#A6FFFD" },
   messageForm: { flexDirection: "row", alignItems: "center", marginTop: 10 },
-  messageInput: { flex: 1, borderWidth: 1, borderColor: "#D35400", padding: 10, borderRadius: 5 },
+  messageInput: { flex: 1, borderWidth: 1, borderColor: "#39FF14", padding: 10, borderRadius: 5, color: "#A6FFFD" },
 });
 
 export default App;
