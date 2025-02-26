@@ -21,11 +21,13 @@ services:
       - lucentia_network
 
   lucencia-frontend:
-    image: nginx:latest
-    volumes:
-      - ./frontend:/usr/share/nginx/html
+    build:
+      context: ./frontend
+    command: "npx expo start"
     ports:
-      - "8080:80"
+      - "8081:8081"
+    depends_on:
+      - lucencia-backend
     networks:
       - lucentia_network
 
