@@ -24,21 +24,21 @@ export default function AuthScreen() {
         checkToken();
     }, []);
 
-    const handleSignup = async () => {
-        setError(""); // Reset error message
-        try {
-            const response = await axios.post(`${API_URL}/signup`, new URLSearchParams({
-                username,
-                password
-            }), {
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
-            });
-            await AsyncStorage.setItem("token", response.data.access_token);
-            setToken(response.data.access_token);
-        } catch (error) {
-            setError(error.response?.data?.detail || "Ein Fehler ist aufgetreten");
-        }
-    };
+    // const handleSignup = async () => {
+    //     setError(""); // Reset error message
+    //     try {
+    //         const response = await axios.post(`${API_URL}/signup`, new URLSearchParams({
+    //             username,
+    //             password
+    //         }), {
+    //             headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    //         });
+    //         await AsyncStorage.setItem("token", response.data.access_token);
+    //         setToken(response.data.access_token);
+    //     } catch (error) {
+    //         setError(error.response?.data?.detail || "Ein Fehler ist aufgetreten");
+    //     }
+    // };
 
     const handleLogin = async () => {
         setError(""); // Reset error message

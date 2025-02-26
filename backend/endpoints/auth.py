@@ -9,26 +9,26 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter()
 
 
-# SIGN UP
-@router.post("/signup", response_model=TokenResponse)
-async def create_user(
-    username: str = Form(...),    # Form statt Pydantic-Modell
-    password: str = Form(...),    # Password als Form-Daten
-    db: Database = Depends(get_db)
-):
-    existing_user = await db.users.find_one({"username": username})
+# # SIGN UP
+# @router.post("/signup", response_model=TokenResponse)
+# async def create_user(
+#     username: str = Form(...),    # Form statt Pydantic-Modell
+#     password: str = Form(...),    # Password als Form-Daten
+#     db: Database = Depends(get_db)
+# ):
+#     existing_user = await db.users.find_one({"username": username})
 
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Username already exists")
+#     if existing_user:
+#         raise HTTPException(status_code=400, detail="Username already exists")
     
-    hashed_password = pwd_context.hash(password)
+#     hashed_password = pwd_context.hash(password)
 
-    new_user = User(username=username, password=hashed_password)
-    await db.users.insert_one(new_user.dict())
+#     new_user = User(username=username, password=hashed_password)
+#     await db.users.insert_one(new_user.dict())
 
-    token = create_access_token(data={"sub": str(new_user.id)})  # Convert ObjectId to string
+#     token = create_access_token(data={"sub": str(new_user.id)})  # Convert ObjectId to string
 
-    return {"access_token": token, "token_type": "bearer"}
+#     return {"access_token": token, "token_type": "bearer"}
 
 # LOGIN
 @router.post("/login", response_model=TokenResponse)
