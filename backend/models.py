@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 class Message(BaseModel):
     sender: str
     message: str
-    sent_at: float = Field(default_factory=lambda: time.time())
+    sent_at: int = Field(default_factory=lambda: int(time.time() * 1000))
 
 class Chat(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
