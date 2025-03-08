@@ -10,6 +10,7 @@ const App = () => {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
   const [selectedChatId, setSelectedChatId] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState("en");  // Default language: English
   const navigation = useNavigation();
 
   const API_KEY = "your-secret-key";
@@ -49,7 +50,19 @@ const App = () => {
       }
     }, 5000);
     return () => clearInterval(interval);
-  }, [selectedChatId]);
+  }, [selectedChatId, selectedLanguage]);
+  
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const storedLanguage = await AsyncStorage.getItem("selectedLanguage");
+      if (storedLanguage) {
+        setSelectedLanguage(storedLanguage);
+      }
+    };
+    loadLanguage();
+  }, []);
+  
 
   const loadUsername = async () => {
     const response = await fetch(backendUrlUser, {
@@ -66,7 +79,7 @@ const App = () => {
   const loadMessages = async (chatId) => {
     if (!chatId) return;
     try {
-      const response = await fetch(`${backendUrl}${chatId}`, {
+      const response = await fetch(`${backendUrl}${chatId}?language=${selectedLanguage}`, {
         method: "GET",
         headers: { "Content-Type": "application/json", "X-API-KEY": API_KEY },
       });
@@ -105,10 +118,28 @@ const App = () => {
     loadMessages(selectedChatId);
   };
 
+  // Function to handle language change
+  const handleLanguageChange = async (lang) => {
+    setSelectedLanguage(lang); // Update selected language
+    await AsyncStorage.setItem("selectedLanguage", lang); // Save to AsyncStorage
+  };
+  
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Bubble</Text>
       <Text style={styles.username}>Connected as: {username}</Text>
+
+      {/* Language selection buttons */}
+      <View style={styles.languageSelector}>
+        <Button title="English" onPress={() => handleLanguageChange("en")} />
+        <Button title="German" onPress={() => handleLanguageChange("de")} />
+        <Button title="French" onPress={() => handleLanguageChange("fr")} />
+        <Button title="Italian" onPress={() => handleLanguageChange("it")} />
+        <Button title="Dutch" onPress={() => handleLanguageChange("nl")} />
+        <Button title="Spanish" onPress={() => handleLanguageChange("es")} />
+      </View>
+
 
       <View style={styles.chatWrapper}>
         <ScrollView style={styles.chatList}>
@@ -160,6 +191,7 @@ const styles = StyleSheet.create({
   messageText: { color: "#A6FFFD" },
   messageForm: { flexDirection: "row", alignItems: "center", marginTop: 10 },
   messageInput: { flex: 1, borderWidth: 1, borderColor: "#39FF14", padding: 10, borderRadius: 5, color: "#A6FFFD" },
+  languageSelector: { flexDirection: "row", justifyContent: "center", marginBottom: 10 },
 });
 
 export default App;
