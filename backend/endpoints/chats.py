@@ -6,14 +6,10 @@ from models import Chat, Message
 from typing import List
 from database import get_db
 from security.utils import get_current_user
+from translation.translate_message import translate_message
 
 router = APIRouter()
 
-
-# TODO: move to service
-def translate(message, language: str):
-    message = message + " in " + language
-    return message
 
 
 # GET EVERYTHING
@@ -49,11 +45,12 @@ async def create_chat(chat_id: str, message: dict = Body(...), db: Database = De
 
     # TODO: move to service
     message_obj.translations = {
-        "de": translate(message_obj.message, "German"),
-        "it": translate(message_obj.message, "Italian"),
-        "nl": translate(message_obj.message, "Dutch"),
-        "es": translate(message_obj.message, "Spanish"),
-        "fr": translate(message_obj.message, "French"),
+        "de": translate_message(message_obj.message, "German"),
+        "it": translate_message(message_obj.message, "Italian"),
+        "nl": translate_message(message_obj.message, "Dutch"),
+        "es": translate_message(message_obj.message, "Spanish"),
+        "fr": translate_message(message_obj.message, "French"),
+        "en": translate_message(message_obj.message, "English"),
     }
 
     await db.chats.update_one(
