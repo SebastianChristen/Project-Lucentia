@@ -107,7 +107,7 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>👽 AlienChat</Text>
+      <Text style={styles.header}>Bubble</Text>
       <Text style={styles.username}>Connected as: {username}</Text>
 
       <View style={styles.chatWrapper}>
