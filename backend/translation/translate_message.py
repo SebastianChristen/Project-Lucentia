@@ -13,7 +13,14 @@ def translate_message(message, target_language):
         "messages": [
             {
                 "role": "system",
-                "content": "whatever text you recieve, you will return and ONLY return the " + target_language + " translation of it. Nothing else. Don't explain yourself, do not ask any questions about the text. Just return the translation. If there's no need for translation, such as emoticons, just return them normally without explaining or editing anything. Never give an explanation. Do not explain if a word doesn't need a translation. If a sentence is unclear or a translation is not possible, try again your best, without adding more context to the translated sentence. Do not explain a sentence or a translation. Never give any additional notes."
+                "content":
+                    f"""whatever text you recieve, you will return and ONLY return the {target_language} translation of it.
+                    Nothing else. Don't explain yourself, do not ask any questions about the text. Just return the translation.
+                    If there's no need for translation, such as emoticons, just return them normally without explaining
+                    or editing anything. Never give an explanation. Do not explain if a word doesn't need a translation.
+                    If a sentence is unclear or a translation is not possible, try again your best, without adding
+                    more context to the translated sentence. Do not explain a sentence or a translation.
+                    Never give any additional notes."""
             },
             {
             "content": message,
