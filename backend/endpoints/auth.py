@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Form, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from models import LoginRequest, User, TokenResponse
 from security.utils import create_access_token, get_current_user
 from database import get_db
@@ -11,16 +11,15 @@ router = APIRouter()
 
 # SIGN UP
 @router.post("/signup", response_model=TokenResponse)
-async def create_user(
-    username: str = Form(...),    # Form statt Pydantic-Modell
-    password: str = Form(...),    # Password als Form-Daten
-    db: Database = Depends(get_db)
-):
+async def create_user(login_request: LoginRequest, db: Database = Depends(get_db)):
+    username = login_request.username
+    password = login_request.password
+
     existing_user = await db.users.find_one({"username": username})
 
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already exists")
-    
+
     hashed_password = pwd_context.hash(password)
 
     new_user = User(username=username, password=hashed_password)
@@ -32,11 +31,10 @@ async def create_user(
 
 # LOGIN
 @router.post("/login", response_model=TokenResponse)
-async def login(
-    username: str = Form(...),   # Form statt Pydantic-Modell!
-    password: str = Form(...),   # Form statt Pydantic-Modell!
-    db: Database = Depends(get_db)
-):
+async def login(login_request: LoginRequest, db: Database = Depends(get_db)):
+    username = login_request.username
+    password = login_request.password
+
     stored_user = await db.users.find_one({"username": username})
 
     if not stored_user:
@@ -53,5 +51,5 @@ async def read_users_me(user: dict = Depends(get_current_user), db: Database = D
     stored_user = await db.users.find_one({"id": user["sub"]})
     if not stored_user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     return {"username": stored_user["username"], "id": str(stored_user["id"])}
