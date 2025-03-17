@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import styles from './styles'; // Import styles
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
@@ -10,43 +9,60 @@ const App = () => {
   const [messages, setMessages] = useState([]);
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
-  const [selectedChatId, setSelectedChatId] = useState(null); // New state for selected chat ID
+  const [selectedChatId, setSelectedChatId] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState("en");  // Default language: English
   const navigation = useNavigation();
 
-  // Replace with your backend URL and API Key
   const API_KEY = "your-secret-key";
   const backendUrl = `http://localhost:8000/chats/`;
   const backendUrlUser = `http://localhost:8000/auth/me`;
-
   const [token, setToken] = useState(null);
-    
+
   useEffect(() => {
-      const checkToken = async () => {
-          const storedToken = await AsyncStorage.getItem("token");
-          if (storedToken) {
-              setToken(storedToken);
-          }
-      };
-      checkToken();
-  }, []);
+    const checkToken = async () => {
+        const storedToken = await AsyncStorage.getItem("token");
+        if (storedToken !== token) {
+            setToken(storedToken);
+        }
+    };
+    checkToken();
+    const interval = setInterval(checkToken, 3000);
+    return () => clearInterval(interval);
+  }, [token]);
+
+  useEffect(() => {
+      if (token) {
+          loadUsername();
+          getAllChats();
+      }
+  }, [token]);
 
   useEffect(() => {
     async function loadData() {
-      // const username = await loadUsername();
-      // setUsername(username);
       loadMessages(selectedChatId);
       getAllChats();
       loadUsername();
     }
-
     loadData();
     const interval = setInterval(() => {
       if (selectedChatId) {
-        loadMessages(selectedChatId); // Update messages every 5 seconds for the selected chat
+        loadMessages(selectedChatId);
       }
-    }, 5000); // Update messages every 5 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [selectedChatId]); // Only re-run the effect if selectedChatId changes
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [selectedChatId, selectedLanguage]);
+  
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const storedLanguage = await AsyncStorage.getItem("selectedLanguage");
+      if (storedLanguage) {
+        setSelectedLanguage(storedLanguage);
+      }
+    };
+    loadLanguage();
+  }, []);
+  
 
   const loadUsername = async () => {
     const response = await fetch(backendUrlUser, {
@@ -63,16 +79,15 @@ const App = () => {
   const loadMessages = async (chatId) => {
     if (!chatId) return;
     try {
-      const response = await fetch(`${backendUrl}${chatId}`, {  // Use the selected chatId
+      const response = await fetch(`${backendUrl}${chatId}?language=${selectedLanguage}`, {
         method: "GET",
         headers: { "Content-Type": "application/json", "X-API-KEY": API_KEY },
       });
-  
       const json = await response.json();
       setMessages(Array.isArray(json.messages) ? json.messages : []);
     } catch (error) {
       console.error("Error loading messages:", error);
-      setMessages([]); // Fallback, falls ein Fehler auftritt
+      setMessages([]);
     }
   };
 
@@ -87,12 +102,9 @@ const App = () => {
 
   const handleSubmit = async () => {
     const sessionUuid = document.cookie.split("; ").find(row => row.startsWith("session_uuid="))?.split("=")[1];
-    const data = {
-      sender: sessionUuid,
-      message: message,
-    };
+    const data = { sender: sessionUuid, message: message };
 
-    await fetch(`${backendUrl}${selectedChatId}`, {  // Send the message to the selected chatId
+    await fetch(`${backendUrl}${selectedChatId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -102,58 +114,84 @@ const App = () => {
       body: JSON.stringify(data),
     });
 
-    setMessage(""); // Reset input field
-    loadMessages(selectedChatId); // Reload messages for the selected chat
+    setMessage("");
+    loadMessages(selectedChatId);
   };
 
-  const logoff = () => {
-    document.cookie = "session_uuid=;"; // Remove session cookie
+  // Function to handle language change
+  const handleLanguageChange = async (lang) => {
+    setSelectedLanguage(lang); // Update selected language
+    await AsyncStorage.setItem("selectedLanguage", lang); // Save to AsyncStorage
   };
+  
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Lucentia</Text>
-      <View style={styles.account}>
-        <Text>Angemeldet als: {username}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('explore')}>
-            <Text style={styles.link}>Anmelden</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={logoff}>
-          <Text style={styles.link}>Abmelden</Text>
-        </TouchableOpacity>
+      <Text style={styles.header}>Bubble</Text>
+      <Text style={styles.username}>Connected as: {username}</Text>
+
+      {/* Language selection buttons */}
+      <View style={styles.languageSelector}>
+        <Button title="English" onPress={() => handleLanguageChange("en")} />
+        <Button title="German" onPress={() => handleLanguageChange("de")} />
+        <Button title="French" onPress={() => handleLanguageChange("fr")} />
+        <Button title="Italian" onPress={() => handleLanguageChange("it")} />
+        <Button title="Dutch" onPress={() => handleLanguageChange("nl")} />
+        <Button title="Spanish" onPress={() => handleLanguageChange("es")} />
       </View>
 
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.chatsList}>
+
+      <View style={styles.chatWrapper}>
+        <ScrollView style={styles.chatList}>
           {chats.map((chat) => (
             <TouchableOpacity key={chat.id} onPress={() => { setSelectedChatId(chat.id); loadMessages(chat.id); }}>
               <Text style={styles.chat}>{chat.name}</Text>
             </TouchableOpacity>
           ))}
-        </View>
-      </ScrollView>
-
-      <View style={styles.messageWrapper}>
-        <ScrollView style={styles.messagesList}>
-          {messages.map((message, index) => (
-            <Text key={index} style={{ color: '#696' }}>
-              {message.sender}: {message.message}
-            </Text>
-          ))}
         </ScrollView>
 
-        <View style={styles.messageForm}>
-          <TextInput
-            style={styles.messageInput}
-            placeholder="Message"
-            value={message}
-            onChangeText={setMessage}
-          />
-          <Button title="Send" onPress={handleSubmit} style={styles.sendButton} />
-        </View>
+        <ScrollView style={styles.messagesList}>
+          {messages.map((msg, index) => (
+            <View key={index} style={styles.messageBubble}>
+              <Text style={styles.messageSender}>
+            {msg.sender} - {new Date(Number(msg.sent_at)).toLocaleString()}
+          </Text>
+              <Text style={styles.messageText}>{msg.message}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+
+      <View style={styles.messageForm}>
+        <TextInput
+          style={styles.messageInput}
+          placeholder="Send a signal..."
+          value={message}
+          onChangeText={setMessage}
+          onSubmitEditing={handleSubmit}
+          blurOnSubmit={false}
+          returnKeyType="send"
+        />
+        <Button title="Transmit" onPress={handleSubmit} color="#39FF14" />
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, backgroundColor: "#0A0A23" },
+  header: { fontSize: 28, fontWeight: "bold", textAlign: "center", color: "#39FF14" },
+  username: { textAlign: "center", marginBottom: 10, color: "#A6FFFD" },
+  chatWrapper: { flexDirection: "row", flex: 1 },
+  chatList: { maxWidth: 120, backgroundColor: "#112233", padding: 10, borderRadius: 10 },
+  chat: { fontSize: 16, marginBottom: 8, color: "#39FF14" },
+  messagesList: { flex: 1, padding: 10 },
+  messageBubble: { marginBottom: 10, padding: 10, backgroundColor: "#222244", borderRadius: 8 },
+  messageSender: { fontWeight: "bold", color: "#39FF14" },
+  messageText: { color: "#A6FFFD" },
+  messageForm: { flexDirection: "row", alignItems: "center", marginTop: 10 },
+  messageInput: { flex: 1, borderWidth: 1, borderColor: "#39FF14", padding: 10, borderRadius: 5, color: "#A6FFFD" },
+  languageSelector: { flexDirection: "row", justifyContent: "center", marginBottom: 10 },
+});
 
 export default App;

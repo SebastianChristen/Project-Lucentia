@@ -8,6 +8,8 @@ services:
       - "8000:8000"
     depends_on:
       - mongodb
+    volumes:
+      - ./backend:/app  # Mount your local backend directory into the container
     networks:
       - lucentia_network
 
@@ -21,11 +23,15 @@ services:
       - lucentia_network
 
   lucencia-frontend:
-    image: nginx:latest
-    volumes:
-      - ./frontend:/usr/share/nginx/html
+    build:
+      context: ./frontend
+    command: "npx expo start"
     ports:
-      - "8080:80"
+      - "8081:8081"
+    depends_on:
+      - lucencia-backend
+    volumes:
+      - ./frontend:/app  # Mount your local frontend directory into the container
     networks:
       - lucentia_network
 
