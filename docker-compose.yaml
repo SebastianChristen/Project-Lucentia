@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-  lucencia-backend:
+  chatapp-backend:
     build:
       context: ./backend
     command: "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
@@ -9,9 +9,9 @@ services:
     depends_on:
       - mongodb
     volumes:
-      - ./backend:/app  # Mount your local backend directory into the container
+      - ./backend:/app # Mount your local backend directory into the container
     networks:
-      - lucentia_network
+      - chatapp_network
 
   mongodb:
     image: mongo:latest
@@ -20,23 +20,10 @@ services:
     volumes:
       - ./backend/init-mongodb.js:/docker-entrypoint-initdb.d/init-mongodb.js
     networks:
-      - lucentia_network
-
-  lucencia-frontend:
-    build:
-      context: ./frontend
-    command: "npx expo start"
-    ports:
-      - "8081:8081"
-    depends_on:
-      - lucencia-backend
-    volumes:
-      - ./frontend:/app  # Mount your local frontend directory into the container
-    networks:
-      - lucentia_network
+      - chatapp_network
 
 networks:
-  lucentia_network:
+  chatapp_network:
     driver: bridge
 
 volumes:

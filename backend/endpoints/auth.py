@@ -1,55 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from models import LoginRequest, User, TokenResponse
-from security.utils import create_access_token, get_current_user
-from database import get_db
-from pymongo.database import Database
-from passlib.context import CryptContext
+from fastapi import APIRouter, Depends
+from services import AuthService
+from models import LoginRequest, TokenResponse, UserResponse
+from services.helpers import JwtHelper
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter()
 
 
 # SIGN UP
 @router.post("/signup", response_model=TokenResponse)
-async def create_user(login_request: LoginRequest, db: Database = Depends(get_db)):
-    username = login_request.username
-    password = login_request.password
-
-    existing_user = await db.users.find_one({"username": username})
-
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Username already exists")
-
-    hashed_password = pwd_context.hash(password)
-
-    new_user = User(username=username, password=hashed_password)
-    await db.users.insert_one(new_user.dict())
-
-    token = create_access_token(data={"sub": str(new_user.id)})  # Convert ObjectId to string
-
-    return {"access_token": token, "token_type": "bearer"}
+async def create_user(login_request: LoginRequest):
+    return await AuthService.signup(login_request)
 
 # LOGIN
 @router.post("/login", response_model=TokenResponse)
-async def login(login_request: LoginRequest, db: Database = Depends(get_db)):
-    username = login_request.username
-    password = login_request.password
+async def login(login_request: LoginRequest):
+    return await AuthService.login(login_request)
 
-    stored_user = await db.users.find_one({"username": username})
-
-    if not stored_user:
-        raise HTTPException(status_code=400, detail="Username not found")
-
-    if not pwd_context.verify(password, stored_user["password"]):
-        raise HTTPException(status_code=400, detail="Incorrect password")
-
-    token = create_access_token(data={"sub": str(stored_user["id"])})
-    return {"access_token": token, "token_type": "bearer"}
-
-@router.get("/me")
-async def read_users_me(user: dict = Depends(get_current_user), db: Database = Depends(get_db)):
-    stored_user = await db.users.find_one({"id": user["sub"]})
-    if not stored_user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    return {"username": stored_user["username"], "id": str(stored_user["id"])}
+# CURRENT USER
+@router.get("/me", response_model=UserResponse)
+async def get_user(currentUserPayload: dict = Depends(JwtHelper.get_current_user)):
+    return await AuthService.me(currentUserPayload)
