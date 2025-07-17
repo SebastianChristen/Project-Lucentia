@@ -1,24 +1,22 @@
 # endpoints/users.py
-from fastapi import APIRouter, Depends, HTTPException
-from pymongo.database import Database
 from typing import List
-from database import get_db
-import security.utils as utils
-from models import User
+from fastapi import APIRouter, Depends
+from services import UserService
+from services.helpers import JwtHelper
+from models import UserRequest, UserResponse
 
 router = APIRouter()
 
 
-# # GET ALL
-# @router.get("/", response_model=List[User])
-# async def get_users(db: Database = Depends(get_db)):
-#     users = await db.users.find().to_list(None)
-#     return [User(**usr) for usr in users]
+# GET ALL USERS
+@router.get("/", response_model=List[UserResponse])
+async def get_users():
+    return await UserService.get_users()
 
-# GET ONE BY UUID
-@router.get("/{uuid}", response_model=User)
-async def get_user(uuid: str, db: Database = Depends(get_db)):
-    user = await db.users.find_one({"id": uuid})
-    return User(**user)
+@router.get("/{user_uuid}", response_model=UserResponse)
+async def get_user(user_uuid: str):
+    return await UserService.get_user_by_id(user_uuid)
 
-# new users are now created in auth, so i removed this endpoint
+@router.put("/", response_model=UserResponse)
+async def update_user(user_request: UserRequest, currentUserPayload: dict = Depends(JwtHelper.get_current_user)):
+    return await UserService.update_user(user_request, currentUserPayload)

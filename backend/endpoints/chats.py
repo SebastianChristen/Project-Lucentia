@@ -1,63 +1,40 @@
 # endpoints/chats.py
-from fastapi import APIRouter, Body, Depends, HTTPException, Query
-from pymongo.database import Database
-from .users import get_user
-from models import ChannelsResponse, Chat, Message, MessageRequest
-from typing import List, Optional
-from database import get_db
-from security.utils import get_current_user
-from translation.translate_message import translate_message
+from fastapi import APIRouter, Depends
+from services import ChannelService
+from models import ChannelsResponse, ChatResponseFull, MessageRequest, ChannelsRequest
+from typing import List
+from services.helpers.JwtHelper import get_current_user
 
 router = APIRouter()
 
-
-
-# GET EVERYTHING
+# GET List of Channels
 @router.get("/", response_model=List[ChannelsResponse])
-async def get_chats(db: Database = Depends(get_db)):
-    channels = await db.chats.find().to_list(None)
-    return [ChannelsResponse(**channel) for channel in channels]
+async def get_all_channels() -> List[ChannelsResponse]:
+    return await ChannelService.getAll()
 
+# POST a new Channel
+@router.post("/", response_model=ChannelsResponse)
+async def create_channel(channel_request: ChannelsRequest):
+    return await ChannelService.saveChannel(channel_request)
 
 # GET A SPECIFIED CHAT
-@router.get("/{id}", response_model=Chat)
-async def get_chats(id: str, language: Optional[str] = Query(None), db: Database = Depends(get_db)):
-    chat = await db.chats.find_one({"id": id})
+@router.get("/{uuid}", response_model=ChatResponseFull)
+async def get_chat(uuid: str) -> ChatResponseFull:
+    return await ChannelService.getFullChannel(uuid)
 
-    for message in chat["messages"]:
-        # Translate goofy ahh UUIDs to usernames
-        user_data = await get_user(uuid=message["sender"], db=db)
-        message["sender"] = user_data.username
+# create & append message to channel
+@router.post("/{channel_uuid}", response_model=ChatResponseFull)
+async def send_message(channel_uuid: str, message_request: MessageRequest, user=Depends(get_current_user)):
+    return await ChannelService.saveMessage(channel_uuid, message_request, user)
 
-        # Translate message to specified language
-        if language and message.get("translations") and language in message.get("translations"):
-            message["message"] = message["translations"][language]
-        else:
-            message["message"] = message["message"]
+# Update an existing message
+@router.put("/{message_uuid}") # todo: types
+async def update_message(message_uuid: str, message_request: MessageRequest, user=Depends(get_current_user)):
+    return await ChannelService.updateMessage(message_uuid, message_request, user)
 
-    return Chat(**chat)
 
-# POST ONE
-@router.post("/{chat_id}", response_model=Chat)
-async def create_chat(chat_id: str, message_request: MessageRequest, db: Database = Depends(get_db), user=Depends(get_current_user)):
-    message = message_request.dict()
-    message["sender"] = user["sub"]
-    message_obj = Message(**message)
-
-    # TODO: move to service
-    message_obj.translations = {
-        "de": translate_message(message_obj.message, "German"),
-        "it": translate_message(message_obj.message, "Italian"),
-        "nl": translate_message(message_obj.message, "Dutch"),
-        "es": translate_message(message_obj.message, "Spanish"),
-        "fr": translate_message(message_obj.message, "French"),
-        "en": translate_message(message_obj.message, "English"),
-    }
-
-    await db.chats.update_one(
-        {"id": chat_id},
-        {"$push": {"messages": message_obj.dict()}}
-    )
-    updated_chat = await db.chats.find_one({"id": chat_id})
-    return updated_chat
+# DELETE a message
+@router.delete("/{message_uuid}") # todo: types
+async def delete_message(message_uuid: str, user=Depends(get_current_user)):
+    return await ChannelService.deleteMessage(message_uuid, user)
 
